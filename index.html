@@ -186,7 +186,7 @@ html+=`<p class="small">You are within normal range. Support us by volunteering 
 <a href="${donationURL}" target="_blank"><button class="btn donate">💝 Donate</button></a></p>`;
 }else{
 let groupLink=(selAge==="0-18")?waChildren:(selGender==="Female")?waFemale:waMale;
-const prefill=`Hare Krishna! I want to order a Bhagavad Gita.%0AName: ${name||'—'}%0AGender: ${selGender}%0AAge Group: ${selAge}%0AStress %: ${percent}%0APlease contact me.`;
+const prefill = `Hare Krishna! I want to order a Bhagavad Gita.%0A%0A• Name: ${name || '—'}%0A• Gender: ${selGender}%0A• Age Group: ${selAge}%0A• Stress %: ${percent}%0A%0APlease contact me.`;
 html+=`<p class="small">Join <strong>Free Mind Management Course</strong> via WhatsApp.</p>
 <p><a href="${groupLink}" target="_blank"><button class="btn">📲 Join Free Mind Management Course</button></a></p>
 <p class="small">If you need a Bhagavad Gita, message us for delivery.</p>
