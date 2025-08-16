@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Stress Test - Bhagavad Gita</title>
+<style>
+  body { font-family:'Segoe UI',Arial,sans-serif; margin:0; padding:0; background:#f5f5f5; }
+  .container { max-width:800px; margin:auto; padding:20px; background:#fff; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.1); }
+  h1 { text-align:center; color:#8B0000; }
+  .section { background:#fef4f4; padding:15px; border-radius:8px; margin-bottom:20px; }
+  ul { line-height:1.6; }
+  input[type=radio] { margin-right:8px; }
+  button { background:#25D366;color:white;border:none;padding:12px 20px;border-radius:6px;font-size:1em; cursor:pointer; }
+  table { width:100%; border-collapse: collapse; margin-top:15px; }
+  th, td { border:1px solid #ccc; padding:8px; text-align:center; }
+  th { background:#f2f2f2; }
+  @media (max-width:600px){ .container{ padding:10px; } button{ width:100%; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>📊 Live Stress Test (Based on Bhagavad Gita)</h1>
+
+  <div class="section">
+    <h3>Stress Level Statistics (WHO)</h3>
+    <ul>
+      <li>💼 Over <b>77%</b> of employees experience stress-related symptoms at work.</li>
+      <li>🧠 Workplace stress costs the global economy <b>$1 trillion</b> in lost productivity every year.</li>
+    </ul>
+  </div>
+
+  <form id="stressTestForm">
+    <p><b>0.</b> Gender:</p>
+    <label><input type="radio" name="gender" value="Male"> Male</label><br>
+    <label><input type="radio" name="gender" value="Female"> Female</label><br><br>
+
+    <p><b>00.</b> Age Group:</p>
+    <label><input type="radio" name="ageGroup" value="18-25"> 18-25</label><br>
+    <label><input type="radio" name="ageGroup" value="26-35"> 26-35</label><br>
+    <label><input type="radio" name="ageGroup" value="36+"> 36+</label><br><br>
+
+    <p><b>1.</b> How often do you feel mentally exhausted after work?</p>
+    <label><input type="radio" name="q1" value="3"> Always</label><br>
+    <label><input type="radio" name="q1" value="2"> Often</label><br>
+    <label><input type="radio" name="q1" value="1"> Rarely</label><br><br>
+
+    <!-- Questions 2 to 10 same as previous HTML -->
+    <p><b>2.</b> Do you find it hard to focus on a task without distractions? (BG 6.26)</p>
+    <label><input type="radio" name="q2" value="3"> Very hard</label><br>
+    <label><input type="radio" name="q2" value="2"> Sometimes</label><br>
+    <label><input type="radio" name="q2" value="1"> Not really</label><br><br>
+
+    <p><b>3.</b> How often do you feel anxious about future events? (BG 2.47)</p>
+    <label><input type="radio" name="q3" value="3"> Daily</label><br>
+    <label><input type="radio" name="q3" value="2"> Weekly</label><br>
+    <label><input type="radio" name="q3" value="1"> Rarely</label><br><br>
+
+    <p><b>4.</b> How often do you get 7-8 hours of proper sleep?</p>
+    <label><input type="radio" name="q4" value="1"> Always</label><br>
+    <label><input type="radio" name="q4" value="2"> Sometimes</label><br>
+    <label><input type="radio" name="q4" value="3"> Rarely</label><br><br>
+
+    <p><b>5.</b> How often do you engage in meditation or prayer? (BG 6.15)</p>
+    <label><input type="radio" name="q5" value="1"> Daily</label><br>
+    <label><input type="radio" name="q5" value="2"> Weekly</label><br>
+    <label><input type="radio" name="q5" value="3"> Never</label><br><br>
+
+    <p><b>6.</b> Do you often skip meals or eat at irregular times due to work? (BG 6.17)</p>
+    <label><input type="radio" name="q6" value="3"> Yes, regularly</label><br>
+    <label><input type="radio" name="q6" value="2"> Occasionally</label><br>
+    <label><input type="radio" name="q6" value="1"> Never</label><br><br>
+
+    <p><b>7.</b> How often do you take short breaks to refresh during work?</p>
+    <label><input type="radio" name="q7" value="1"> Every hour</label><br>
+    <label><input type="radio" name="q7" value="2"> Once or twice a day</label><br>
+    <label><input type="radio" name="q7" value="3"> Never</label><br><br>
+
+    <p><b>8.</b> How often do you feel a lack of purpose in your work? (BG 3.19)</p>
+    <label><input type="radio" name="q8" value="3"> Frequently</label><br>
+    <label><input type="radio" name="q8" value="2"> Sometimes</label><br>
+    <label><input type="radio" name="q8" value="1"> Never</label><br><br>
+
+    <p><b>9.</b> Do you feel irritated or angry over small issues? (BG 2.63)</p>
+    <label><input type="radio" name="q9" value="3"> Very often</label><br>
+    <label><input type="radio" name="q9" value="2"> Sometimes</label><br>
+    <label><input type="radio" name="q9" value="1"> Rarely</label><br><br>
+
+    <p><b>10.</b> Do you multitask often instead of focusing on one duty at a time? (BG 18.48)</p>
+    <label><input type="radio" name="q10" value="3"> Always</label><br>
+    <label><input type="radio" name="q10" value="2"> Sometimes</label><br>
+    <label><input type="radio" name="q10" value="1"> Rarely</label><br><br>
+
+    <button type="button" onclick="calculateStress()">Submit Test</button>
+  </form>
+
+  <div id="result" style="margin-top:25px;font-size:1.1em;color:#333;"></div>
+
+  <h3>Live Stats</h3>
+  <table id="statsTable">
+    <thead>
+      <tr>
+        <th>Gender</th>
+        <th>Age Group</th>
+        <th>Submissions</th>
+        <th>Average Stress %</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Male</td><td>18-25</td><td id="male18-25">0</td><td id="male18-25-avg">0</td></tr>
+      <tr><td>Male</td><td>26-35</td><td id="male26-35">0</td><td id="male26-35-avg">0</td></tr>
+      <tr><td>Male</td><td>36+</td><td id="male36">0</td><td id="male36-avg">0</td></tr>
+      <tr><td>Female</td><td>18-25</td><td id="female18-25">0</td><td id="female18-25-avg">0</td></tr>
+      <tr><td>Female</td><td>26-35</td><td id="female26-35">0</td><td id="female26-35-avg">0</td></tr>
+      <tr><td>Female</td><td>36+</td><td id="female36">0</td><td id="female36-avg">0</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDvYmVBsufaspOcfHNOASnhprlgxMZb8_I",
+    authDomain: "stresstestdb.firebaseapp.com",
+    projectId: "stresstestdb",
+    storageBucket: "stresstestdb.firebasestorage.app",
+    messagingSenderId: "770106837788",
+    appId: "1:770106837788:web:656424276d7a20833308d9",
+    measurementId: "G-NKBVWEXGD9"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  async function calculateStress() {
+    const form = document.getElementById("stressTestForm");
+    const gender = form.gender.value;
+    const ageGroup = form.ageGroup.value;
+    if(!gender || !ageGroup){ alert("Please select gender and age group."); return; }
+
+    let total=0, questions=10;
+    for(let i=1;i<=questions;i++){
+      let val = document.querySelector(`input[name="q${i}"]:checked`);
+      if(!val){ alert("Please answer all questions."); return; }
+      total += parseInt(val.value);
+    }
+    const percentage = (total/(questions*3))*100;
+    let level = "";
+    if(percentage<=40) level="Normal Stress";
+    else if(percentage<=70) level="Medium Stress";
+    else level="High Stress";
+
+    document.getElementById("result").innerHTML = `<h3>Your Stress Level: ${percentage.toFixed(1)}%</h3>
+      <p>Category: <b>${level}</b></p>
+      <p><i>0-40% = Normal | 41-70% = Medium | 71-100% = High</i></p>`;
+
+    if(level!=="Normal Stress"){
+      document.getElementById("result").innerHTML += `<p>We recommend joining our <b>FREE Mind Management Course</b>.</p>
+        <a href="https://wa.me/919337611446?text=I%20want%20to%20register%20for%20the%20FREE%20Mind%20Management%20Course." target="_blank">📘 Register</a>`;
+    } else {
+      document.getElementById("result").innerHTML += `<p>You can support this initiative by <b>volunteering or donating</b>.</p>`;
+    }
+
+    await addDoc(collection(db,"stressTests"),{ gender, ageGroup, score:percentage, timestamp:new Date() });
+    updateStats();
+  }
+
+  async function updateStats(){
+    const docs = await getDocs(collection(db,"stressTests"));
+    const stats = {};
+    docs.forEach(d=>{ 
+      const {gender, ageGroup, score} = d.data();
+      const key = gender+ageGroup;
+      if(!stats[key]) stats[key]={count:0,total:0};
+      stats[key].count++;
+      stats[key].total+=score;
+    });
+    ["Male","Female"].forEach(g=>{
+      ["18-25","26-35","36+"].forEach(a=>{
+        const key=g+a;
+        const count=stats[key]?.count||0;
+        const avg=stats[key]?.total? (stats[key].total/stats[key].count).toFixed(1) : 0;
+        document.getElementById(key).innerText=count;
+        document.getElementById(key+"-avg").innerText=avg;
+      });
+    });
+  }
+  updateStats();
+</script>
