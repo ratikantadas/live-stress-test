@@ -1,111 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Live Stress Test</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Live Stress Test — Bhagavad Gita Insights</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
-    h1 { text-align: center; }
-    .quiz { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
-    .question { margin-bottom: 15px; }
-    button { margin-top: 10px; padding: 10px 20px; border: none; border-radius: 5px; background: #007bff; color: white; cursor: pointer; }
-    button:hover { background: #0056b3; }
-    .result { margin-top: 20px; padding: 15px; border-radius: 8px; background: #eef; }
-    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    th { background: #007bff; color: white; }
+    :root{--accent:#1f6feb;--muted:#6b7280;--card:#fff;--bg:#f4f6fb;}
+    body{font-family:Inter,Arial,Helvetica,sans-serif;background:var(--bg);margin:0;padding:20px;color:#111}
+    .wrap{max-width:900px;margin:16px auto;padding:20px;background:var(--card);border-radius:12px;box-shadow:0 8px 24px rgba(8,10,20,.06)}
+    h1{margin:0 0 8px;color:#11436b;text-align:center}
+    p.lead{color:var(--muted);text-align:center;margin-top:0}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .card{background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(10,10,20,.04)}
+    label{display:block;margin-bottom:6px;font-weight:600}
+    .small{font-size:0.92rem;color:var(--muted)}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .btn{padding:10px 14px;border-radius:8px;border:1px solid transparent;background:var(--accent);color:white;cursor:pointer}
+    .btn.ghost{background:transparent;color:var(--accent);border-color:rgba(31,111,235,.12)}
+    .btn.warn{background:#f59e0b}
+    .btn.danger{background:#ef4444}
+    .question{background:#fbfdff;border-left:4px solid #cfe3ff;padding:12px;margin-bottom:12px;border-radius:8px}
+    .gita{font-size:0.9rem;color:#444;margin-top:6px;font-style:italic}
+    .answers{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
+    .answers label{display:inline-flex;align-items:center;gap:8px;background:#eef3ff;padding:8px 10px;border-radius:8px;cursor:pointer}
+    .answers input{accent-color:var(--accent)}
+    #resultBox{margin-top:16px;padding:14px;border-radius:8px;display:none}
+    .result-normal{background:#e6f4ea;border:1px solid #c6e7cf}
+    .result-medium{background:#fff7e6;border:1px solid #ffe6b8}
+    .result-high{background:#fff3e6;border:1px solid #ffd0b3}
+    .result-risky{background:#fff0f0;border:1px solid #ffbdbd}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{border:1px solid #e6eef7;padding:8px;text-align:center}
+    th{background:#f1f7ff}
+    .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+    @media (max-width:720px){ .row{flex-direction:column} .stats-grid{grid-template-columns:1fr} }
   </style>
 </head>
 <body>
-  <h1>Live Stress Test</h1>
-  <div class="quiz">
-    <div id="quizForm">
-      <label>Gender:</label><br>
-      <input type="radio" name="gender" value="Male" required> Male
-      <input type="radio" name="gender" value="Female"> Female
-      <br><br>
-      <label>Age Group:</label><br>
-      <input type="radio" name="age" value="0-18" required> 0-18
-      <input type="radio" name="age" value="19-30"> 19-30
-      <input type="radio" name="age" value="31-45"> 31-45
-      <input type="radio" name="age" value="46-60"> 46-60
-      <input type="radio" name="age" value="61+"> 61+
-      <br><br>
+  <div class="wrap" role="main">
+    <h1>Live Stress Test</h1>
+    <p class="lead">Quick 10-question assessment (professional tone) with a short Bhagavad Gita reference per question. Results are saved to your Firebase project and live community statistics are shown below.</p>
 
-      <!-- 10 Stress Questions -->
-      <div class="question">1. I often feel overwhelmed.<br>
-        <input type="radio" name="q1" value="10"> Strongly Agree
-        <input type="radio" name="q1" value="7"> Agree
-        <input type="radio" name="q1" value="4"> Neutral
-        <input type="radio" name="q1" value="1"> Disagree
-      </div>
-      <div class="question">2. I sleep peacefully at night.<br>
-        <input type="radio" name="q2" value="1"> Strongly Agree
-        <input type="radio" name="q2" value="4"> Agree
-        <input type="radio" name="q2" value="7"> Neutral
-        <input type="radio" name="q2" value="10"> Disagree
-      </div>
-      <div class="question">3. I feel anxious without clear reason.<br>
-        <input type="radio" name="q3" value="10"> Strongly Agree
-        <input type="radio" name="q3" value="7"> Agree
-        <input type="radio" name="q3" value="4"> Neutral
-        <input type="radio" name="q3" value="1"> Disagree
-      </div>
-      <div class="question">4. I can focus on tasks easily.<br>
-        <input type="radio" name="q4" value="1"> Strongly Agree
-        <input type="radio" name="q4" value="4"> Agree
-        <input type="radio" name="q4" value="7"> Neutral
-        <input type="radio" name="q4" value="10"> Disagree
-      </div>
-      <div class="question">5. I get irritated quickly.<br>
-        <input type="radio" name="q5" value="10"> Strongly Agree
-        <input type="radio" name="q5" value="7"> Agree
-        <input type="radio" name="q5" value="4"> Neutral
-        <input type="radio" name="q5" value="1"> Disagree
-      </div>
-      <div class="question">6. I feel calm most of the time.<br>
-        <input type="radio" name="q6" value="1"> Strongly Agree
-        <input type="radio" name="q6" value="4"> Agree
-        <input type="radio" name="q6" value="7"> Neutral
-        <input type="radio" name="q6" value="10"> Disagree
-      </div>
-      <div class="question">7. I worry about the future.<br>
-        <input type="radio" name="q7" value="10"> Strongly Agree
-        <input type="radio" name="q7" value="7"> Agree
-        <input type="radio" name="q7" value="4"> Neutral
-        <input type="radio" name="q7" value="1"> Disagree
-      </div>
-      <div class="question">8. I enjoy my daily activities.<br>
-        <input type="radio" name="q8" value="1"> Strongly Agree
-        <input type="radio" name="q8" value="4"> Agree
-        <input type="radio" name="q8" value="7"> Neutral
-        <input type="radio" name="q8" value="10"> Disagree
-      </div>
-      <div class="question">9. I get headaches or tension often.<br>
-        <input type="radio" name="q9" value="10"> Strongly Agree
-        <input type="radio" name="q9" value="7"> Agree
-        <input type="radio" name="q9" value="4"> Neutral
-        <input type="radio" name="q9" value="1"> Disagree
-      </div>
-      <div class="question">10. I feel positive and hopeful.<br>
-        <input type="radio" name="q10" value="1"> Strongly Agree
-        <input type="radio" name="q10" value="4"> Agree
-        <input type="radio" name="q10" value="7"> Neutral
-        <input type="radio" name="q10" value="10"> Disagree
+    <!-- Basic info -->
+    <div class="row" style="margin-top:12px">
+      <div style="flex:1" class="card">
+        <label>Full name (optional)</label>
+        <input id="name" placeholder="Optional — helps us follow-up" style="width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef7" />
       </div>
 
-      <button type="button" onclick="submitTest()">Submit</button>
+      <div style="width:220px" class="card">
+        <label>Gender</label>
+        <div class="controls">
+          <button type="button" class="btn ghost" id="genderMale">Male</button>
+          <button type="button" class="btn ghost" id="genderFemale">Female</button>
+        </div>
+        <div class="small">Selected: <span id="selGender">—</span></div>
+      </div>
+
+      <div style="width:220px" class="card">
+        <label>Age Group</label>
+        <div class="controls">
+          <button type="button" class="btn ghost" data-age="0-18">0–18</button>
+          <button type="button" class="btn ghost" data-age="18-25">18–25</button>
+          <button type="button" class="btn ghost" data-age="26-35">26–35</button>
+          <button type="button" class="btn ghost" data-age="36+">36+</button>
+        </div>
+        <div class="small">Selected: <span id="selAge">—</span></div>
+      </div>
     </div>
 
-    <div id="result" class="result" style="display:none;"></div>
-    <div id="stats" style="display:none;"></div>
+    <form id="quizForm" class="card" style="margin-top:14px">
+      <h2 style="margin-top:0">Assessment Questions</h2>
+
+      <!-- Questions with professional Gita refs -->
+      <div class="question">
+        <label>1. Do you often feel anxious about the outcome of your efforts?</label>
+        <div class="gita">BG 2.47 — Focus on your duty; do not fixate on outcomes.</div>
+        <div class="answers">
+          <label><input name="q1" type="radio" value="10" required /> Rarely</label>
+          <label><input name="q1" type="radio" value="20" /> Sometimes</label>
+          <label><input name="q1" type="radio" value="30" /> Often</label>
+          <label><input name="q1" type="radio" value="40" /> Always</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>2. How balanced do you remain after success or failure?</label>
+        <div class="gita">BG 2.48 — Equanimity in success and failure reduces stress.</div>
+        <div class="answers">
+          <label><input name="q2" type="radio" value="10" required /> Rarely</label>
+          <label><input name="q2" type="radio" value="20" /> Sometimes</label>
+          <label><input name="q2" type="radio" value="30" /> Often</label>
+          <label><input name="q2" type="radio" value="40" /> Always</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>3. Do you struggle to control your attention under pressure?</label>
+        <div class="gita">BG 6.6 — A disciplined mind is your best ally.</div>
+        <div class="answers">
+          <label><input name="q3" type="radio" value="10" required /> Rarely</label>
+          <label><input name="q3" type="radio" value="20" /> Sometimes</label>
+          <label><input name="q3" type="radio" value="30" /> Often</label>
+          <label><input name="q3" type="radio" value="40" /> Always</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>4. Do you worry about matters outside your control?</label>
+        <div class="gita">BG 18.66 — Steadying the mind reduces unnecessary anxiety.</div>
+        <div class="answers">
+          <label><input name="q4" type="radio" value="10" required /> Rarely</label>
+          <label><input name="q4" type="radio" value="20" /> Sometimes</label>
+          <label><input name="q4" type="radio" value="30" /> Often</label>
+          <label><input name="q4" type="radio" value="40" /> Always</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>5. Do you feel irritation or anger in small situations?</label>
+        <div class="gita">BG 2.63 — Anger clouds judgment; managing it reduces stress.</div>
+        <div class="answers">
+          <label><input name="q5" type="radio" value="10" required /> Rarely</label>
+          <label><input name="q5" type="radio" value="20" /> Sometimes</label>
+          <label><input name="q5" type="radio" value="30" /> Often</label>
+          <label><input name="q5" type="radio" value="40" /> Always</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>6. How often do you lose focus while working?</label>
+        <div class="gita">BG 6.26 — Train the mind to return to the task at hand.</div>
+        <div class="answers">
+          <label><input name="q6" type="radio" value="10" required /> Rarely</label>
+          <label><input name="q6" type="radio" value="20" /> Sometimes</label>
+          <label><input name="q6" type="radio" value="30" /> Often</label>
+          <label><input name="q6" type="radio" value="40" /> Always</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>7. Do sleep disturbances happen frequently because of worry?</label>
+        <div class="gita">BG 6.17 — A balanced routine supports mental stability.</div>
+        <div class="answers">
+          <label><input name="q7" type="radio" value="10" required /> Rarely</label>
+          <label><input name="q7" type="radio" value="20" /> Sometimes</label>
+          <label><input name="q7" type="radio" value="30" /> Often</label>
+          <label><input name="q7" type="radio" value="40" /> Always</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>8. Do you act without a sense of purpose often?</label>
+        <div class="gita">BG 3.19 — Acting with purpose and without attachment reduces stress.</div>
+        <div class="answers">
+          <label><input name="q8" type="radio" value="10" required /> Rarely</label>
+          <label><input name="q8" type="radio" value="20" /> Sometimes</label>
+          <label><input name="q8" type="radio" value="30" /> Often</label>
+          <label><input name="q8" type="radio" value="40" /> Always</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>9. Do you feel restless even when tasks are completed?</label>
+        <div class="gita">BG 14.26 — Rising above disturbances creates lasting calm.</div>
+        <div class="answers">
+          <label><input name="q9" type="radio" value="10" required /> Rarely</label>
+          <label><input name="q9" type="radio" value="20" /> Sometimes</label>
+          <label><input name="q9" type="radio" value="30" /> Often</label>
+          <label><input name="q9" type="radio" value="40" /> Always</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>10. Do you feel you lack inner resilience for challenges?</label>
+        <div class="gita">BG 18.58 — Cultivating inner wisdom builds resilience.</div>
+        <div class="answers">
+          <label><input name="q10" type="radio" value="10" required /> Rarely</label>
+          <label><input name="q10" type="radio" value="20" /> Sometimes</label>
+          <label><input name="q10" type="radio" value="30" /> Often</label>
+          <label><input name="q10" type="radio" value="40" /> Always</label>
+        </div>
+      </div>
+
+      <div style="text-align:center">
+        <button class="btn" type="submit" id="submitBtn">Submit Test</button>
+      </div>
+    </form>
+
+    <!-- Result and actions -->
+    <div id="resultBox" role="region" aria-live="polite"></div>
+
+    <!-- Live stats -->
+    <div id="liveStats" class="card" style="margin-top:16px;display:none">
+      <h3 style="margin-top:0">Community Live Statistics</h3>
+      <div class="stats-grid">
+        <div>
+          <p><strong>Total Tests:</strong> <span id="totalCount">0</span></p>
+          <p><strong>Distribution:</strong></p>
+          <ul id="distribution" class="small" style="text-align:left"></ul>
+        </div>
+        <div>
+          <p><strong>Average Stress % (by age & gender)</strong></p>
+          <table aria-describedby="avgTable">
+            <thead><tr><th>Gender</th><th>0–18</th><th>18–25</th><th>26–35</th><th>36+</th></tr></thead>
+            <tbody>
+              <tr><td>Male</td><td id="male-0-18">-</td><td id="male-18-25">-</td><td id="male-26-35">-</td><td id="male-36+">-</td></tr>
+              <tr><td>Female</td><td id="female-0-18">-</td><td id="female-18-25">-</td><td id="female-26-35">-</td><td id="female-36+">-</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <script>
-    // Firebase init with your config
+  <!-- Firebase modular SDK (v9+ style) -->
+  <script type="module">
+    // ---------------------------
+    // Firebase setup (you provided earlier)
+    // ---------------------------
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyDvYmVBsufaspOcfHNOASnhprlgxMZb8_I",
       authDomain: "stresstestdb.firebaseapp.com",
@@ -115,85 +232,213 @@
       appId: "1:770106837788:web:656424276d7a20833308d9",
       measurementId: "G-NKBVWEXGD9"
     };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
 
-    async function submitTest(){
-      let gender = document.querySelector('input[name="gender"]:checked');
-      let age = document.querySelector('input[name="age"]:checked');
-      if(!gender || !age){ alert("Please select gender and age group!"); return; }
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const collectionRef = collection(db, "stressTestResults");
 
-      let score = 0;
+    // WhatsApp / links
+    const WA_NUMBER = "919337611446"; // your number with country code
+    const donationURL = "https://tinyurl.com/mrkes3cf";
+    const waMale = "https://chat.whatsapp.com/EN4YElvh3gl51ZYX32ZLHM?mode=ac_t";
+    const waFemale = "https://chat.whatsapp.com/CMWTpY1CG7G91Mt6HGf8Op?mode=ac_t";
+    const waChildren = "https://chat.whatsapp.com/JHgQIdB5LNI2xgol5sCr2F?mode=ac_t";
+
+    // Prevent multi submission from same device unless test=true
+    const isTestMode = location.search.includes("test=true");
+    function hasSubmittedOnDevice(){ return localStorage.getItem("stressSubmitted") === "true"; }
+    function markSubmittedOnDevice(){ localStorage.setItem("stressSubmitted","true"); }
+
+    // helper: calculate category
+    function categoryFromPercent(p){
+      if(p < 40) return "Normal";
+      if(p < 60) return "Medium";
+      if(p < 80) return "High";
+      return "Very Risky";
+    }
+
+    // form submit handler
+    const form = document.getElementById("quizForm");
+    const resultBox = document.getElementById("resultBox");
+    form.addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      // device-block
+      if(!isTestMode && hasSubmittedOnDevice()){
+        alert("You have already submitted from this device. (If testing, add ?test=true to URL)");
+        return;
+      }
+
+      // read basic info
+      const name = document.getElementById("name").value.trim();
+      // gender selection: the two ghost buttons set the chosen value on click
+      const selGender = document.getElementById("selGender").innerText;
+      const selAge = document.getElementById("selAge").innerText;
+
+      if(!selGender || selGender === "—" || !selAge || selAge === "—"){
+        alert("Please select gender and age group at the top.");
+        return;
+      }
+
+      // collect answers
+      let total = 0;
+      let answered = 0;
       for(let i=1;i<=10;i++){
-        let ans = document.querySelector('input[name="q'+i+'"]:checked');
-        if(!ans){ alert("Please answer all questions!"); return; }
-        score += parseInt(ans.value);
+        const r = document.querySelector(`input[name="q${i}"]:checked`);
+        if(!r){ alert("Please answer all questions."); return; }
+        total += parseInt(r.value,10);
+        answered++;
       }
-      let percent = Math.round((score/100)*100);
+      // percent: total / 400 *100
+      const percent = Math.round((total / 400) * 100);
+      const category = categoryFromPercent(percent);
 
-      let status = "";
-      if(percent < 40) status="Normal";
-      else if(percent < 60) status="Medium";
-      else if(percent < 80) status="High";
-      else status="Very Risky";
+      // Save to Firestore
+      try{
+        await addDoc(collectionRef, {
+          name: name || null,
+          gender: selGender,
+          ageGroup: selAge,
+          percent,
+          category,
+          createdAt: new Date().toISOString()
+        });
+      } catch(err){
+        console.error("Firestore save error:", err);
+        alert("Could not save result to database — check console.");
+      }
 
-      // Save in Firestore
-      await db.collection("stressResults").add({
-        gender: gender.value,
-        age: age.value,
-        score: percent,
-        time: new Date()
-      });
+      // mark device submitted
+      if(!isTestMode) markSubmittedOnDevice();
 
-      // Show result + actions
-      let msg = `<h3>Your Stress Percentage: ${percent}% (${status})</h3>`;
-      if(status==="Normal"){
-        msg += `<p>You seem fine! Support us by 
-        <a href="https://tinyurl.com/mrkes3cf" target="_blank">Donating</a> 
-        or <a href="https://wa.me/919337611446" target="_blank">Being a Volunteer</a>.</p>`;
+      // Build result UI
+      let cssClass = (category==="Normal")? "result-normal" : (category==="Medium")? "result-medium" : (category==="High")? "result-high" : "result-risky";
+      resultBox.className = cssClass;
+      resultBox.style.display = "block";
+
+      // Basic result text
+      let html = `<h3>Your Stress Percentage: ${percent}% — <strong>${category}</strong></h3>`;
+
+      if(category === "Normal"){
+        html += `<p class="small">You are within normal range. Would you like to support this initiative?</p>
+                 <p>
+                   <a class="action" href="https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Hare Krishna! I want to volunteer for Gita outreach.")}" target="_blank">
+                     <button class="btn">🤝 Volunteer via WhatsApp</button>
+                   </a>
+                   <a class="action" href="${donationURL}" target="_blank">
+                     <button class="btn donate">💝 Donate</button>
+                   </a>
+                 </p>`;
       } else {
-        // WhatsApp group links
-        let waLink = "";
-        if(age.value==="0-18") waLink="https://chat.whatsapp.com/JHgQIdB5LNI2xgol5sCr2F";
-        else if(gender.value==="Male") waLink="https://chat.whatsapp.com/EN4YElvh3gl51ZYX32ZLHM";
-        else waLink="https://chat.whatsapp.com/CMWTpY1CG7G91Mt6HGf8Op";
+        // Group link based on age/gender: children wins over gender
+        let groupLink = waMale;
+        if(selAge === "0-18") groupLink = waChildren;
+        else if(selGender === "Female") groupLink = waFemale;
 
-        msg += `<p>We recommend you join our <b>Free Mind Management Course</b>.<br>
-        👉 <a href="${waLink}" target="_blank">Join WhatsApp Group</a></p>
-        <p>If you want to order a Bhagavad Gita, click below:<br>
-        <a href="https://wa.me/919337611446?text=I%20want%20a%20Gita%20for%20stress%20management.%20Gender:%20${gender.value},%20Age:%20${age.value},%20Stress:%20${percent}%" target="_blank">Order Gita via WhatsApp</a></p>`;
+        html += `<p class="small">We recommend the <strong>Free Mind Management Course</strong> — join the WhatsApp group below.</p>
+                 <p><a href="${groupLink}" target="_blank"><button class="btn">📲 Join Free Mind Management Course</button></a></p>`;
+
+        // If they already have Gita, they can still join. If not, allow ordering
+        const prefill = `Hare Krishna! I want to order a Bhagavad Gita.%0AName: ${name || '—'}%0AGender: ${selGender}%0AAge Group: ${selAge}%0AStress %: ${percent}%0APlease%20contact%20me.`;
+        html += `<p class="small">If you need a copy of the Bhagavad Gita, message us and we will assist with language preference & delivery.</p>
+                 <p><a href="https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(prefill)}" target="_blank"><button class="btn">📖 Order Bhagavad Gita</button></a></p>`;
       }
-      document.getElementById("result").innerHTML=msg;
-      document.getElementById("result").style.display="block";
 
+      resultBox.innerHTML = html;
+
+      // refresh stats
       loadStats();
-    }
+      // scroll to result
+      resultBox.scrollIntoView({behavior:"smooth"});
+    });
 
+    // small UI: set gender/age via top buttons
+    document.getElementById("genderMale").addEventListener("click", ()=>{
+      document.getElementById("selGender").innerText = "Male";
+      document.getElementById("genderMale").classList.add("btn");
+      document.getElementById("genderFemale").classList.remove("btn");
+      document.getElementById("genderFemale").classList.add("btn","ghost");
+    });
+    document.getElementById("genderFemale").addEventListener("click", ()=>{
+      document.getElementById("selGender").innerText = "Female";
+      document.getElementById("genderFemale").classList.add("btn");
+      document.getElementById("genderMale").classList.remove("btn");
+      document.getElementById("genderMale").classList.add("btn","ghost");
+    });
+    document.querySelectorAll('[data-age]').forEach(b=>{
+      b.addEventListener("click", ()=> {
+        const v = b.getAttribute("data-age");
+        document.getElementById("selAge").innerText = v;
+        // style toggles (simple)
+        document.querySelectorAll('[data-age]').forEach(x=> x.classList.remove('btn'));
+        document.querySelectorAll('[data-age]').forEach(x=> x.classList.add('btn','ghost'));
+        b.classList.remove('ghost'); b.classList.add('btn');
+      });
+    });
+
+    // loadStats: fetch all docs and compute totals & averages
     async function loadStats(){
-      const snap = await db.collection("stressResults").get();
-      let results = snap.docs.map(d=>d.data());
-      document.getElementById("stats").style.display="block";
+      try{
+        const docs = await getDocs(collectionRef);
+        const rows = [];
+        docs.forEach(d => rows.push(d.data()));
+        // totals
+        const total = rows.length;
+        document.getElementById("totalCount").innerText = total;
 
-      let total = results.length;
-      let groups = ["0-18","19-30","31-45","46-60","61+"];
-      let males = {}, females = {};
-      groups.forEach(g=>{males[g]=[]; females[g]=[];});
+        // distribution counts by category
+        const dist = { Normal:0, Medium:0, High:0, "Very Risky":0 };
+        rows.forEach(r => { if(r.category) dist[r.category] = (dist[r.category]||0)+1; });
 
-      results.forEach(r=>{
-        if(r.gender==="Male") males[r.age].push(r.score);
-        else females[r.age].push(r.score);
-      });
+        const distEl = document.getElementById("distribution");
+        distEl.innerHTML = `
+          <li>Normal: ${dist.Normal} (${total? Math.round(dist.Normal/total*100):0}%)</li>
+          <li>Medium: ${dist.Medium} (${total? Math.round(dist.Medium/total*100):0}%)</li>
+          <li>High: ${dist.High} (${total? Math.round(dist.High/total*100):0}%)</li>
+          <li>Very Risky: ${dist["Very Risky"]} (${total? Math.round(dist["Very Risky"]/total*100):0}%)</li>
+        `;
 
-      function avg(arr){ return arr.length? (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1):"-"; }
+        // prepare age groups and genders we care about and compute averages
+        const ageGroups = ["0-18","18-25","26-35","36+"];
+        const buckets = {
+          male: {"0-18":[], "18-25":[], "26-35":[], "36+": []},
+          female: {"0-18":[], "18-25":[], "26-35":[], "36+": []}
+        };
 
-      let table = `<h3>📊 Statistics (Total Tests: ${total})</h3>
-      <table><tr><th>Age Group</th><th>Male Avg %</th><th>Female Avg %</th></tr>`;
-      groups.forEach(g=>{
-        table += `<tr><td>${g}</td><td>${avg(males[g])}</td><td>${avg(females[g])}</td></tr>`;
-      });
-      table += "</table>";
-      document.getElementById("stats").innerHTML=table;
+        rows.forEach(r=>{
+          // try to map incoming ageGroup values to our labels
+          let ag = r.ageGroup || r.age || "36+";
+          // normalize some possible variants used earlier
+          if(ag === "Below 18" || ag === "0-18") ag = "0-18";
+          else if(/18/.test(ag) && !/26/.test(ag)) ag = "18-25";
+          else if(/26|31|31-45|26-40/.test(ag)) ag = "26-35";
+          else if(/36|40|41-60|46-60|60+/.test(ag)) ag = "36+";
+          const g = (r.gender || "").toLowerCase().startsWith("f") ? "female" : "male";
+          if(buckets[g] && buckets[g][ag]) buckets[g][ag].push(Number(r.percent || r.score || r.percent || 0));
+        });
+
+        // write to table cells
+        function avg(arr){ return arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) + "%" : "-" }
+
+        document.getElementById("male-0-18").innerText = avg(buckets.male["0-18"]);
+        document.getElementById("male-18-25").innerText = avg(buckets.male["18-25"]);
+        document.getElementById("male-26-35").innerText = avg(buckets.male["26-35"]);
+        document.getElementById("male-36+").innerText = avg(buckets.male["36+"]);
+
+        document.getElementById("female-0-18").innerText = avg(buckets.female["0-18"]);
+        document.getElementById("female-18-25").innerText = avg(buckets.female["18-25"]);
+        document.getElementById("female-26-35").innerText = avg(buckets.female["26-35"]);
+        document.getElementById("female-36+").innerText = avg(buckets.female["36+"]);
+
+        // show stats container
+        document.getElementById("liveStats").style.display = "block";
+
+      } catch(err){
+        console.error("Error loading stats:", err);
+      }
     }
+
+    // initial load
+    loadStats();
   </script>
 </body>
 </html>
